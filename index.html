@@ -225,15 +225,6 @@
             box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
         }
 
-        input[type="range"]::-moz-range-thumb {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: #3498db;
-            cursor: pointer;
-            border: none;
-        }
-
         .toggle-btn {
             padding: 12px 30px;
             background: linear-gradient(135deg, #e74c3c, #c0392b);
@@ -306,6 +297,7 @@
         .spec-list li {
             padding: 5px 0;
             opacity: 0.8;
+            list-style: none;
         }
 
         /* Flow Diagram */
@@ -455,23 +447,7 @@
             margin: 10px 0;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .house-visualization { grid-template-columns: 1fr; }
-            section { padding: 60px 20px; }
-            h2 { font-size: 2rem; }
-            .flow-steps { flex-direction: column; }
-            .flow-step::after { 
-                content: '↓';
-                right: auto;
-                top: auto;
-                bottom: -40px;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-        }
-
+        /* Info Tooltip */
         .info-tooltip {
             position: fixed;
             background: rgba(0,0,0,0.9);
@@ -491,6 +467,45 @@
 
         .info-tooltip.show {
             display: block;
+        }
+
+        /* --- PERBAIKAN KHUSUS MOBILE UI/UX --- */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1.1rem; }
+            .hero .start-btn { width: 100%; padding: 15px; font-size: 1.1rem; }
+
+            section { padding: 40px 15px; }
+            h2 { font-size: 1.8rem; }
+            .section-subtitle { font-size: 1rem; margin-bottom: 30px; }
+
+            .demo-container { padding: 20px 15px; border-radius: 20px; }
+            .house-visualization { grid-template-columns: 1fr; gap: 30px; }
+            .controls-panel { padding: 20px 15px; }
+            .reading-value { font-size: 2rem; }
+            .control-group h3 { font-size: 1.2rem; }
+
+            .flow-container { padding: 30px 15px; border-radius: 20px; }
+            .flow-steps { flex-direction: column; gap: 40px; }
+            .flow-step::after { 
+                content: '↓';
+                right: auto;
+                top: auto;
+                bottom: -35px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .component-card { padding: 25px 15px; }
+            .component-icon { font-size: 3rem; }
+            .component-card h3 { font-size: 1.4rem; }
+
+            .math-card { padding: 25px 15px; border-radius: 20px; }
+            .math-formula { font-size: 1.1rem; padding: 15px; }
+            .calc-result .result-value { font-size: 1.8rem; }
+            
+            /* Sembunyikan tooltip di mobile karena tidak ada hover (pakai klik di JS jika perlu) */
+            .info-tooltip { max-width: 80%; left: 10% !important; right: 10%; }
         }
     </style>
 </head>
@@ -514,35 +529,27 @@
             <div class="house-visualization">
                 <div class="house-model">
                     <svg class="house-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Dasar Rumah -->
                         <rect x="50" y="200" width="300" height="180" fill="#34495e" stroke="#2c3e50" stroke-width="3"/>
                         
-                        <!-- Atap -->
                         <polygon points="200,100 50,200 350,200" fill="#c0392b" stroke="#a93226" stroke-width="3"/>
                         
-                        <!-- Lantai 2 -->
                         <rect x="50" y="200" width="300" height="90" fill="#4a5f7f" stroke="#2c3e50" stroke-width="2"/>
                         
-                        <!-- Jendela Lantai 2 -->
                         <rect id="window1" x="80" y="220" width="50" height="50" fill="#f39c12" stroke="#d68910" stroke-width="2" class="window"/>
                         <rect id="window2" x="175" y="220" width="50" height="50" fill="#f39c12" stroke="#d68910" stroke-width="2" class="window"/>
                         <rect id="window3" x="270" y="220" width="50" height="50" fill="#f39c12" stroke="#d68910" stroke-width="2" class="window"/>
                         
-                        <!-- Jendela Lantai 1 -->
                         <rect id="window4" x="80" y="310" width="50" height="50" fill="#f39c12" stroke="#d68910" stroke-width="2" class="window"/>
                         <rect id="window5" x="270" y="310" width="50" height="50" fill="#f39c12" stroke="#d68910" stroke-width="2" class="window"/>
                         
-                        <!-- Pintu -->
                         <rect x="175" y="300" width="50" height="80" fill="#8b4513" stroke="#654321" stroke-width="2"/>
                         <circle cx="215" cy="340" r="3" fill="#ffd700"/>
                         
-                        <!-- Fan -->
                         <circle id="fan" cx="300" cy="340" r="15" fill="#3498db" opacity="0.7"/>
                         <line x1="300" y1="325" x2="300" y2="355" stroke="white" stroke-width="2"/>
                         <line x1="285" y1="340" x2="315" y2="340" stroke="white" stroke-width="2"/>
                     </svg>
 
-                    <!-- Sensor Indicators -->
                     <div class="sensor-indicator sensor-dht1" data-sensor="DHT22 Lantai 2"></div>
                     <div class="sensor-indicator sensor-dht2" data-sensor="DHT22 Lantai 1"></div>
                     <div class="sensor-indicator sensor-rain" data-sensor="Rain Sensor"></div>
@@ -877,7 +884,6 @@
             const windows = document.querySelectorAll('.window');
             const fan = document.getElementById('fan');
             
-            // Logika Jendela
             if (isRaining) {
                 windowStatus.textContent = 'TERTUTUP (Hujan)';
                 windowStatus.style.color = '#e74c3c';
@@ -900,7 +906,6 @@
                 modeStatus.textContent = 'Mode Normal';
             }
             
-            // Logika Fan
             if ((temp > 30 || humidity > 75) && !isRaining) {
                 fanStatus.textContent = 'ON';
                 fanStatus.style.color = '#2ecc71';
@@ -912,9 +917,8 @@
             }
         }
 
-        // Sensor Tooltip
         document.querySelectorAll('.sensor-indicator').forEach(sensor => {
-            sensor.addEventListener('mouseenter', (e) => {
+            const showTooltip = (e) => {
                 const tooltip = document.getElementById('tooltip');
                 const title = document.getElementById('tooltip-title');
                 const content = document.getElementById('tooltip-content');
@@ -933,17 +937,32 @@
                 
                 content.textContent = descriptions[sensorName];
                 
-                tooltip.style.left = e.pageX + 20 + 'px';
-                tooltip.style.top = e.pageY - 50 + 'px';
+                // Cek apakah mobile
+                if(window.innerWidth > 768) {
+                    tooltip.style.left = e.pageX + 20 + 'px';
+                    tooltip.style.top = e.pageY - 50 + 'px';
+                } else {
+                    tooltip.style.bottom = '20px';
+                    tooltip.style.top = 'auto';
+                }
                 tooltip.classList.add('show');
-            });
+            };
+
+            sensor.addEventListener('mouseenter', showTooltip);
+            sensor.addEventListener('click', showTooltip); // Support mobile tap
             
             sensor.addEventListener('mouseleave', () => {
                 document.getElementById('tooltip').classList.remove('show');
             });
         });
 
-        // Math Calculator
+        // Event listener untuk menutup tooltip jika klik di luar (mobile)
+        document.addEventListener('touchstart', (e) => {
+            if (!e.target.classList.contains('sensor-indicator')) {
+                document.getElementById('tooltip').classList.remove('show');
+            }
+        });
+
         function calculateVolume() {
             const length = parseFloat(document.getElementById('length-input').value) || 0;
             const width = parseFloat(document.getElementById('width-input').value) || 0;
@@ -958,7 +977,6 @@
                 surfaceArea.toLocaleString('id-ID') + ' cm²';
         }
 
-        // Fan spin animation
         const style = document.createElement('style');
         style.textContent = `
             @keyframes spin {
@@ -968,7 +986,6 @@
         `;
         document.head.appendChild(style);
 
-        // Initialize
         updateSystem();
         calculateVolume();
     </script>
